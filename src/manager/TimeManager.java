@@ -12,6 +12,7 @@ public class TimeManager implements Runnable {
 	private Calendar calendar;
 
 	private long startTime;
+	private long elapsedTime;
 	private boolean isRun = true;
 
 	private TimeManager() {
@@ -29,6 +30,19 @@ public class TimeManager implements Runnable {
 		this.startTime = getCurrentTimeMs();
 	}
 
+	public void resetTime() {
+		this.startTime = 0;
+		this.elapsedTime = 0;
+	}
+
+	public long getStartTime() {
+		return this.startTime;
+	}
+
+	public long getElapsedTime() {
+		return this.elapsedTime;
+	}
+
 	public long getCurrentTimeMs() {
 		return System.currentTimeMillis();
 	}
@@ -38,22 +52,36 @@ public class TimeManager implements Runnable {
 		return SDF.format(calendar.getTime());
 	}
 
+	public void recordElapsedTime() {
+		elapsedTime += getCurrentTimeMs() - startTime;
+	}
+
+	public void start() {
+		this.isRun = true;
+		initStartTime();
+	}
+
+	public void stop() {
+		recordElapsedTime();
+		this.isRun = false;
+	}
+
 	@Override
 	public void run() {
-		initStartTime();
 
 		while (isRun) {
-			IOManager.buffer.append(getDateTimeFormat());
-			IOManager.buffer.append(getCurrentTimeMs() - startTime);
-
 			try {
+				IOManager.buffer.append(getDateTimeFormat());
+				IOManager.buffer.append(elapsedTime + getCurrentTimeMs() - startTime +"\n");
 				IOManager.writer.append(IOManager.buffer);
+				IOManager.buffer.setLength(0);
 				IOManager.writer.flush();
-
+				
 				Thread.sleep(1000);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (InterruptedException e) {
+				recordElapsedTime();
 				e.printStackTrace();
 			}
 		}

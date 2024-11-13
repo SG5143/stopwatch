@@ -14,8 +14,8 @@ public class IOManager implements Runnable {
 	public static final int STOP = 2;
 	public static final int RESET = 3;
 
-	public static StringBuilder buffer;
-	public static BufferedWriter writer;
+	private static StringBuilder buffer;
+	private static BufferedWriter writer;
 	private BufferedReader reader;
 
 	private Stopwatch stopwatch;
@@ -64,7 +64,7 @@ public class IOManager implements Runnable {
 	public static void print(String msg) {
 		try {
 			buffer.append(msg);
-			writer.append(IOManager.buffer);
+			writer.append(buffer);
 			buffer.setLength(0);
 			writer.flush();
 		} catch (IOException e) {

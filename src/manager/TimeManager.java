@@ -39,15 +39,11 @@ public class TimeManager implements Runnable {
 		return this.startTime;
 	}
 
-	public long getElapsedTime() {
-		return this.elapsedTime;
-	}
-
 	private long getCurrentTimeMs() {
 		return System.currentTimeMillis();
 	}
 
-	public String getDateTimeFormat() {
+	private String getDateTimeFormat() {
 		this.calendar = Calendar.getInstance(TIME_ZONE);
 		return SDF.format(calendar.getTime());
 	}
@@ -79,7 +75,7 @@ public class TimeManager implements Runnable {
 	public void run() {
 		while (isRun) {
 			try {
-				IOManager.buffer.append(getDateTimeFormat());
+				IOManager.print(getDateTimeFormat());
 				long milliSecond = elapsedTime + getCurrentTimeMs() - startTime;
 				String second = String.format("%.3f초\n", (double) milliSecond / 1000);
 				IOManager.print(second);

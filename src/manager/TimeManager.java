@@ -1,6 +1,5 @@
 package manager;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -46,6 +45,10 @@ public class TimeManager implements Runnable {
 	public long getCurrentTimeMs() {
 		return System.currentTimeMillis();
 	}
+	
+	public boolean isRun() {
+		return this.isRun;
+	}
 
 	public String getDateTimeFormat() {
 		this.calendar = Calendar.getInstance(TIME_ZONE);
@@ -54,11 +57,17 @@ public class TimeManager implements Runnable {
 
 	public void recordElapsedTime() {
 		elapsedTime += getCurrentTimeMs() - startTime;
+
+		try {
+			String second = String.format("%.3f초 소요", (double) elapsedTime / 1000);
+			IOManager.print(second);
+		} catch (Exception e) {
+		}
 	}
 
 	public void start() {
-		this.isRun = true;
 		initStartTime();
+		this.isRun = true;
 	}
 
 	public void stop() {
@@ -68,21 +77,15 @@ public class TimeManager implements Runnable {
 
 	@Override
 	public void run() {
-
 		while (isRun) {
 			try {
 				IOManager.buffer.append(getDateTimeFormat());
-				IOManager.buffer.append(elapsedTime + getCurrentTimeMs() - startTime +"\n");
-				IOManager.writer.append(IOManager.buffer);
-				IOManager.buffer.setLength(0);
-				IOManager.writer.flush();
-				
+				long milliSecond = elapsedTime + getCurrentTimeMs() - startTime;
+				String second = String.format("%.3f초\n", (double) milliSecond / 1000);
+				IOManager.print(second);
+
 				Thread.sleep(1000);
-			} catch (IOException e) {
-				e.printStackTrace();
 			} catch (InterruptedException e) {
-				recordElapsedTime();
-				e.printStackTrace();
 			}
 		}
 	}

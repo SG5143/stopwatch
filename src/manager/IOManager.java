@@ -2,6 +2,7 @@ package manager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
@@ -26,7 +27,6 @@ public class IOManager implements Runnable {
 		IOManager.buffer = new StringBuilder();
 		IOManager.writer = new BufferedWriter(new OutputStreamWriter(System.out));
 		this.reader = new BufferedReader(new InputStreamReader(System.in));
-		stopwatch = Stopwatch.getInstance();
 	}
 
 	private static IOManager instance = new IOManager();
@@ -46,7 +46,7 @@ public class IOManager implements Runnable {
 			buffer.setLength(0);
 			writer.flush();
 
-		} catch (Exception e) {
+		} catch (IOException e) {
 		}
 	}
 
@@ -61,11 +61,22 @@ public class IOManager implements Runnable {
 		}
 	}
 
+	public static void print(String msg) {
+		try {
+			buffer.append(msg);
+			writer.append(IOManager.buffer);
+			buffer.setLength(0);
+			writer.flush();
+		} catch (IOException e) {
+		}
+	}
+
 	@Override
 	public void run() {
 		menu();
 		while (isRun) {
 			input();
+			stopwatch = Stopwatch.getInstance();
 			switch (selectMenu) {
 			case START -> stopwatch.start();
 			case STOP -> stopwatch.stop();

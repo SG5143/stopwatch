@@ -6,15 +6,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-public class IOManager {
+public class IOManager implements Runnable {
 
-	private StringBuilder buffer;
-	private BufferedWriter writer;
+	public static StringBuilder buffer;
+	public static BufferedWriter writer;
 	private BufferedReader reader;
 
+	private boolean isRun = true;
+
 	private IOManager() {
-		this.buffer = new StringBuilder();
-		this.writer = new BufferedWriter(new OutputStreamWriter(System.out));
+		IOManager.buffer = new StringBuilder();
+		IOManager.writer = new BufferedWriter(new OutputStreamWriter(System.out));
 		this.reader = new BufferedReader(new InputStreamReader(System.in));
 	}
 
@@ -34,4 +36,24 @@ public class IOManager {
 		writer.flush();
 	}
 
+	public void input() {
+		try {
+			String input = reader.readLine();
+			int number = -1;
+			number = Integer.parseInt(input);
+			if (number >= 1 && number <= 3) {
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void run() {
+		while (isRun) {
+			input();
+		}
+	}
 }

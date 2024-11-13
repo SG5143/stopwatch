@@ -32,6 +32,7 @@ public class TimeManager implements Runnable {
 	public void resetTime() {
 		this.startTime = 0;
 		this.elapsedTime = 0;
+		IOManager.print("<< 초기화되었습니다 >>");
 	}
 
 	public long getStartTime() {
@@ -42,12 +43,8 @@ public class TimeManager implements Runnable {
 		return this.elapsedTime;
 	}
 
-	public long getCurrentTimeMs() {
+	private long getCurrentTimeMs() {
 		return System.currentTimeMillis();
-	}
-	
-	public boolean isRun() {
-		return this.isRun;
 	}
 
 	public String getDateTimeFormat() {
@@ -55,17 +52,20 @@ public class TimeManager implements Runnable {
 		return SDF.format(calendar.getTime());
 	}
 
-	public void recordElapsedTime() {
+	private void recordElapsedTime() {
 		elapsedTime += getCurrentTimeMs() - startTime;
+	}
 
+	public void printElapsedTime() {
 		try {
-			String second = String.format("%.3f초 소요", (double) elapsedTime / 1000);
+			String second = String.format("<< STOP >> %.3f초 소요", (double) elapsedTime / 1000);
 			IOManager.print(second);
 		} catch (Exception e) {
 		}
 	}
 
 	public void start() {
+		IOManager.print("<< START >>\n");
 		initStartTime();
 		this.isRun = true;
 	}

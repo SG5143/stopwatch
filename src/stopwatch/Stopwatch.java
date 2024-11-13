@@ -15,7 +15,6 @@ public class Stopwatch {
 		this.ioManager = IOManager.getInstance();
 		this.timeManager = TimeManager.getInstance();
 		this.ioManagerT = new Thread(ioManager);
-		this.timeManagerT = new Thread(timeManager);
 	}
 
 	private static Stopwatch instance = new Stopwatch();
@@ -26,35 +25,32 @@ public class Stopwatch {
 
 	public void run() {
 		ioManagerT.start();
-		timeManagerT.start();
 	}
 
 	public void start() {
 		if (timeManager.getElapsedTime() == 0 && (timeManagerT == null || !timeManagerT.isAlive())) {
 			timeManager.start();
-		} else {
+			timeManagerT = new Thread(timeManager);
+			timeManagerT.start();
+		} else if (!timeManagerT.isAlive()) {
 			timeManager.start();
+			timeManagerT = new Thread(timeManager);
+			timeManagerT.start();
 		}
 	}
 
 	public void stop() {
 		if (timeManager.getStartTime() != 0) {
 			timeManager.stop();
-			if (timeManagerT != null && timeManagerT.isAlive()) {
-				timeManagerT.interrupt();
-			}
 		}
 	}
 
 	public void reset() {
-		if (timeManager.getStartTime() != 0) {
-			timeManager.resetTime();
+		if (timeManager.isRun() && timeManagerT != null && timeManagerT.isAlive()) {
 			timeManager.stop();
-			if (timeManagerT != null && timeManagerT.isAlive()) {
-				timeManagerT.interrupt();
-				timeManagerT = null;
-			}
+			timeManagerT.interrupt();
+			timeManagerT = null;
+			timeManager.resetTime();
 		}
 	}
-
 }

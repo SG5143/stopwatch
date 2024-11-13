@@ -28,11 +28,7 @@ public class Stopwatch {
 	}
 
 	public void start() {
-		if (timeManager.getElapsedTime() == 0 && (timeManagerT == null || !timeManagerT.isAlive())) {
-			timeManager.start();
-			timeManagerT = new Thread(timeManager);
-			timeManagerT.start();
-		} else if (!timeManagerT.isAlive()) {
+		if ((timeManagerT == null || !timeManagerT.isAlive())) {
 			timeManager.start();
 			timeManagerT = new Thread(timeManager);
 			timeManagerT.start();
@@ -42,11 +38,12 @@ public class Stopwatch {
 	public void stop() {
 		if (timeManager.getStartTime() != 0) {
 			timeManager.stop();
+			timeManager.printElapsedTime();
 		}
 	}
 
 	public void reset() {
-		if (timeManager.isRun() && timeManagerT != null && timeManagerT.isAlive()) {
+		if (timeManagerT != null) {
 			timeManager.stop();
 			timeManagerT.interrupt();
 			timeManagerT = null;
